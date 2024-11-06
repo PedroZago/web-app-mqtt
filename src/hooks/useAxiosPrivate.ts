@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { api } from "../services/api";
-import { useRefreshToken } from "./useRefreshToken";
+// import { useRefreshToken } from "./useRefreshToken";
 
 export const useAxiosPrivate = () => {
-  const refresh = useRefreshToken();
+  // const refresh = useRefreshToken();
 
   useEffect(() => {
     const requestIntercept = api.interceptors.request.use(
@@ -28,9 +28,9 @@ export const useAxiosPrivate = () => {
           !prevRequest.sent
         ) {
           prevRequest.sent = true;
-          const newAccessToken = await refresh();
+          // const newAccessToken = await refresh();
           if (prevRequest.headers) {
-            prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+            // prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
           }
           return api(prevRequest);
         }
@@ -42,7 +42,8 @@ export const useAxiosPrivate = () => {
       api.interceptors.request.eject(requestIntercept);
       api.interceptors.response.eject(responseIntercept);
     };
-  }, [refresh]);
+    // }, [refresh]);
+  }, []);
 
   return api;
 };

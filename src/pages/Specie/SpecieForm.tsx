@@ -13,9 +13,7 @@ const SpecieForm: FC<SpecieFormProps> = ({ data, onSubmit }) => {
   );
 
   useEffect(() => {
-    if (data) {
-      setFormState(data);
-    }
+    if (data) setFormState(data);
   }, [data]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +31,7 @@ const SpecieForm: FC<SpecieFormProps> = ({ data, onSubmit }) => {
       <TextField
         label="Nome"
         name="name"
-        value={formState.name}
+        value={formState.name || ""}
         onChange={handleChange}
         fullWidth
         margin="normal"

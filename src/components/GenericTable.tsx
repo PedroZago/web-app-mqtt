@@ -1,9 +1,15 @@
-import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridColTypeDef,
+  GridRenderCellParams,
+  GridRowsProp,
+} from "@mui/x-data-grid";
 import { IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-export interface Column<T> {
+export interface Column<T> extends GridColTypeDef {
   field: keyof T;
   headerName: string;
 }
@@ -11,8 +17,8 @@ export interface Column<T> {
 interface GenericTableProps<T> {
   columns: Column<T>[];
   data: T[];
-  onEdit: (data: T) => void;
-  onDelete: (id: T[keyof T]) => void;
+  onEdit?: (data: T) => void;
+  onDelete?: (id: T[keyof T]) => void;
 }
 
 const GenericTable = <T extends { id: string | number }>({
@@ -21,29 +27,39 @@ const GenericTable = <T extends { id: string | number }>({
   onEdit,
   onDelete,
 }: GenericTableProps<T>) => {
-  const actionColumn: GridColDef = {
-    field: "actions",
-    headerName: "Ações",
-    flex: 1,
-    renderCell: (params) => (
-      <>
-        <IconButton onClick={() => onEdit(params.row as T)}>
-          <EditIcon />
-        </IconButton>
-        <IconButton onClick={() => onDelete(params.row.id)}>
-          <DeleteIcon />
-        </IconButton>
-      </>
-    ),
-  };
+  const hasOnEdit = !!onEdit;
+  const hasOnDelete = !!onDelete;
+  const hasActions = hasOnEdit && hasOnDelete;
 
   const gridColumns: GridColDef[] = [
     ...columns.map((col) => ({
+      ...col,
       field: col.field as string,
-      headerName: col.headerName,
       flex: 1,
     })),
-    actionColumn,
+    ...(hasActions
+      ? [
+          {
+            field: "actions",
+            headerName: "Ações",
+            flex: 1,
+            renderCell: (params: GridRenderCellParams) => (
+              <>
+                {hasOnEdit && (
+                  <IconButton onClick={() => onEdit(params.row as T)}>
+                    <EditIcon />
+                  </IconButton>
+                )}
+                {hasOnDelete && (
+                  <IconButton onClick={() => onDelete(params.row.id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                )}
+              </>
+            ),
+          },
+        ]
+      : []),
   ];
 
   return (

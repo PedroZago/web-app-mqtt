@@ -1,9 +1,12 @@
+import { AnimalSex } from "../enums/animal-sex.enum";
+
 export interface AnimalData {
   name: string;
-  specie: string;
-  breed?: string;
-  birthDate?: Date;
-  weight?: number;
+  specieId: string;
+  breedId: string;
+  sex: AnimalSex;
+  birthDate: Date;
+  weight: number;
 }
 
 export interface AnimalAttributes extends AnimalData {

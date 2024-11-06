@@ -28,35 +28,44 @@ const SpeciesPage: FC = () => {
   }, [loadSpecies]);
 
   const handleCreate = async (data: SpecieAttributes) => {
+    setLoading(true);
     try {
       await createSpecie(data);
       loadSpecies();
     } catch (error) {
-      console.error("Erro ao criar specie:", error);
+      console.error("Erro ao criar espécie:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleEdit = async (data: SpecieAttributes) => {
+    setLoading(true);
     try {
       await updateSpecie(data);
       loadSpecies();
     } catch (error) {
-      console.error("Erro ao editar specie:", error);
+      console.error("Erro ao editar espécie:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
+    setLoading(true);
     try {
       await deleteSpecie(id);
       loadSpecies();
     } catch (error) {
-      console.error("Erro ao deletar specie:", error);
+      console.error("Erro ao deletar espécie:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <CRUDPage
-      title="Espécies"
+      title="Espécie"
       columns={[
         { field: "id", headerName: "ID" },
         { field: "name", headerName: "Nome" },
@@ -67,7 +76,7 @@ const SpeciesPage: FC = () => {
       onEdit={handleEdit}
       onDelete={handleDelete}
       FormComponent={SpecieForm}
-      // loading={loading}
+      loading={loading}
     />
   );
 };

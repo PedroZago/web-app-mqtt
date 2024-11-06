@@ -13,3 +13,7 @@ export interface TelemetryData {
   message: MessageData;
   deviceId: string;
 }
+
+export interface TelemetryAttributes extends TelemetryData {
+  id: string;
+}

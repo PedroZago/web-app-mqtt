@@ -6,13 +6,14 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  SelectChangeEvent,
 } from "@mui/material";
 import { AnimalAttributes } from "../../models/animal.model";
 
 interface AnimalFormProps {
   data?: AnimalAttributes | null;
   onSubmit: (data: AnimalAttributes) => void;
-  speciesOptions: { id: string; name: string }[]; // Novo: Recebe as opções de espécies
+  speciesOptions: { id: string; name: string }[];
 }
 
 const AnimalForm: FC<AnimalFormProps> = ({
@@ -25,29 +26,25 @@ const AnimalForm: FC<AnimalFormProps> = ({
   );
 
   useEffect(() => {
-    if (data) {
-      setFormState(data);
-    }
+    if (data) setFormState(data);
   }, [data]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormState((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const handleSpecieChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+  const handleSpecieChange = (event: SelectChangeEvent<string>) => {
     setFormState((prevState) => ({
       ...prevState,
-      specie: event.target.value as string,
+      specieId: event.target.value as string,
     }));
   };
 
   const handleDateChange = (value: string) => {
     setFormState((prevState) => ({
       ...prevState,
-      birthDate: value ? new Date(value) : undefined,
+      birthDate: new Date(value),
     }));
   };
 
@@ -70,8 +67,8 @@ const AnimalForm: FC<AnimalFormProps> = ({
         <InputLabel>Espécie</InputLabel>
         <Select
           label="Espécie"
-          name="specie"
-          value={formState.specie || ""}
+          name="specieId"
+          value={formState.specieId || ""}
           onChange={handleSpecieChange}
         >
           {speciesOptions.map((option) => (
@@ -81,21 +78,28 @@ const AnimalForm: FC<AnimalFormProps> = ({
           ))}
         </Select>
       </FormControl>
-      <TextField
-        label="Raça"
-        name="breed"
-        value={formState.breed || ""}
-        onChange={handleChange}
-        fullWidth
-        margin="normal"
-      />
+      <FormControl fullWidth margin="normal">
+        <InputLabel>Raça</InputLabel>
+        <Select
+          label="Raça"
+          name="breedId"
+          value={formState.breedId || ""}
+          onChange={handleBreedChange}
+        >
+          {breedsOptions.map((option) => (
+            <MenuItem key={option.id} value={option.id}>
+              {option.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
       <TextField
         label="Data de Nascimento"
         name="birthDate"
         type="date"
         value={
           formState.birthDate
-            ? formState.birthDate.toISOString().split("T")[0]
+            ? new Date(formState.birthDate).toISOString().split("T")[0]
             : ""
         }
         onChange={(e) => handleDateChange(e.target.value)}

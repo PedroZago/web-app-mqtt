@@ -2,8 +2,7 @@ import { FC } from "react";
 import { Routes, Route } from "react-router-dom";
 import DashboardPage from "./pages/Dashboard";
 import Layout from "./pages/Layout";
-import Missing from "./pages/Missing";
-import Unauthorized from "./pages/Unauthorized";
+import UnauthorizedPage from "./pages/Unauthorized";
 import RequireAuth from "./components/RequireAuth";
 import { UserRole } from "./enums/user-role.enum";
 import LoginPage from "./pages/Login";
@@ -11,13 +10,15 @@ import SignUpPage from "./pages/SignUp";
 import PublicRoute from "./components/PublicRoute";
 import AnimalsPage from "./pages/Animal";
 import SpeciesPage from "./pages/Specie";
+import MissingPage from "./pages/Missing";
+import DevicesPage from "./pages/Device";
+import NotificationsPage from "./pages/Notification";
+import TelemetriesPage from "./pages/Telemetry";
+import UsersPage from "./pages/User";
 
 const App: FC = () => {
   return (
     <Routes>
-      {/* Redireciona para o login */}
-      {/* <Route path="/" element={<Navigate to="/login" />} /> */}
-
       <Route path="/" element={<Layout />}>
         {/* Public routes */}
         <Route element={<PublicRoute />}>
@@ -25,7 +26,7 @@ const App: FC = () => {
           <Route path="register" element={<SignUpPage />} />
         </Route>
 
-        <Route path="unauthorized" element={<Unauthorized />} />
+        <Route path="unauthorized" element={<UnauthorizedPage />} />
 
         {/* Protected routes */}
         <Route
@@ -38,15 +39,14 @@ const App: FC = () => {
           <Route path="home" element={<DashboardPage />} />
           <Route path="animals" element={<AnimalsPage />} />
           <Route path="species" element={<SpeciesPage />} />
-          {/* <Route path="devices" element={<DevicesPage />} />
+          <Route path="devices" element={<DevicesPage />} />
           <Route path="notifications" element={<NotificationsPage />} />
           <Route path="telemetries" element={<TelemetriesPage />} />
           <Route path="users" element={<UsersPage />} />
-          <Route path="*" element={<MissingPage />} /> */}
         </Route>
 
         {/* Catch-all route */}
-        <Route path="*" element={<Missing />} />
+        <Route path="*" element={<MissingPage />} />
       </Route>
     </Routes>
   );

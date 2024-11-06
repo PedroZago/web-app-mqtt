@@ -6,20 +6,24 @@ import {
   DialogContent,
   DialogTitle,
   Typography,
+  CircularProgress,
+  Backdrop,
 } from "@mui/material";
 import GenericTable, { Column } from "./GenericTable";
+import SidebarLayout from "./SidebarLayout";
 
 interface CRUDPageProps<T> {
   title: string;
   columns: Column<T>[];
   data: T[];
-  onCreate: (data: T) => void;
-  onEdit: (data: T) => void;
-  onDelete: (id: string) => void;
-  FormComponent: FC<{
+  onCreate?: (data: T) => void;
+  onEdit?: (data: T) => void;
+  onDelete?: (id: string) => void;
+  FormComponent?: FC<{
     data?: T | null;
     onSubmit: (data: T) => void;
   }>;
+  loading: boolean;
 }
 
 const CRUDPage = <T extends { id: string }>({
@@ -30,6 +34,7 @@ const CRUDPage = <T extends { id: string }>({
   onEdit,
   onDelete,
   FormComponent,
+  loading,
 }: CRUDPageProps<T>) => {
   const [openModal, setOpenModal] = useState<
     "create" | "edit" | "delete" | null
@@ -47,53 +52,49 @@ const CRUDPage = <T extends { id: string }>({
   };
 
   return (
-    <div>
-      <Typography variant="h4" gutterBottom>
-        {title}
-      </Typography>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => handleOpenModal("create")}
-      >
-        Adicionar Novo
-      </Button>
+    <SidebarLayout title={title}>
+      {!!onCreate && (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleOpenModal("create")}
+        >
+          Adicionar Novo
+        </Button>
+      )}
       <GenericTable
         columns={columns}
         data={data}
-        onEdit={(data) => handleOpenModal("edit", data)}
-        onDelete={(id) =>
-          handleOpenModal("delete", data.find((d) => d.id === id)!)
+        onEdit={onEdit ? (data) => handleOpenModal("edit", data) : undefined}
+        onDelete={
+          onDelete
+            ? (id) => handleOpenModal("delete", data.find((d) => d.id === id)!)
+            : undefined
         }
       />
-
-      {/* Modal de Criação e Edição */}
-      <Dialog
-        open={openModal === "create" || openModal === "edit"}
-        onClose={handleCloseModal}
-      >
-        <DialogTitle>
-          {openModal === "create" ? `Adicionar ${title}` : `Editar ${title}`}
-        </DialogTitle>
-        <DialogContent>
-          <FormComponent
-            data={selectedData}
-            onSubmit={(formData) => {
-              if (openModal === "create") {
-                onCreate(formData);
-              } else {
-                onEdit(formData);
-              }
-              handleCloseModal();
-            }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseModal}>Cancelar</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Modal de Exclusão */}
+      {!!FormComponent && (openModal === "create" || openModal === "edit") && (
+        <Dialog
+          open={openModal === "create" || openModal === "edit"}
+          onClose={handleCloseModal}
+        >
+          <DialogTitle>
+            {openModal === "create" ? `Adicionar ${title}` : `Editar ${title}`}
+          </DialogTitle>
+          <DialogContent>
+            <FormComponent
+              data={selectedData}
+              onSubmit={(formData) => {
+                if (openModal === "create" && onCreate) onCreate(formData);
+                else if (openModal === "edit" && onEdit) onEdit(formData);
+                handleCloseModal();
+              }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseModal}>Cancelar</Button>
+          </DialogActions>
+        </Dialog>
+      )}
       <Dialog open={openModal === "delete"} onClose={handleCloseModal}>
         <DialogTitle>Excluir {title}</DialogTitle>
         <DialogContent>
@@ -104,7 +105,7 @@ const CRUDPage = <T extends { id: string }>({
           <Button
             color="error"
             onClick={() => {
-              if (selectedData) onDelete(selectedData.id);
+              if (selectedData && !!onDelete) onDelete(selectedData.id);
               handleCloseModal();
             }}
           >
@@ -112,7 +113,13 @@ const CRUDPage = <T extends { id: string }>({
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+    </SidebarLayout>
   );
 };
 

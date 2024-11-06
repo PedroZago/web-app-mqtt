@@ -1,7 +1,16 @@
-import React, { createContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useState,
+  ReactNode,
+  useEffect,
+  useCallback,
+} from "react";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import { UserAttributes } from "../models/user.model";
 import { loginUser, registerUser } from "../services/auth.service";
+import { AxiosError } from "axios";
+import { Snackbar, Alert } from "@mui/material";
 
 export interface LoginData {
   email: string;
@@ -29,6 +38,10 @@ export interface AuthState {
   user: UserAttributes | null;
 }
 
+interface DecodedToken {
+  exp: number;
+}
+
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 interface AuthProviderProps {
@@ -42,74 +55,125 @@ const initialAuthState: AuthState = {
     : null,
 };
 
+const handleAuthError = (error: AxiosError, action: string) => {
+  if (!error?.response) {
+    console.error(`${action} - No Server Response`);
+  } else if (error.response?.status === 400) {
+    console.error(`${action} - Bad Request`);
+  } else if (error.response?.status === 401) {
+    console.error(`${action} - Unauthorized`);
+  } else if (error.response?.status === 409) {
+    console.error(`${action} - Conflict`);
+  } else {
+    console.error(`${action} - Failed`);
+  }
+};
+
+const isTokenExpired = (token: string): boolean => {
+  try {
+    const decoded = jwtDecode<DecodedToken>(token);
+    return decoded.exp * 1000 < Date.now();
+  } catch (error) {
+    console.error("Invalid token: " + error);
+    return true;
+  }
+};
+
+const navigateTo = (navigate: ReturnType<typeof useNavigate>, path: string) => {
+  navigate(path, { replace: true });
+};
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const navigate = useNavigate();
-
   const [auth, setAuth] = useState<AuthState>(initialAuthState);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error" | "info",
+  });
 
-  useEffect(() => {
-    if (auth.accessToken) {
-      localStorage.setItem("token", auth.accessToken);
-      localStorage.setItem("user", JSON.stringify(auth.user));
-    } else {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-    }
-  }, [auth]);
+  const isAuthenticated = () =>
+    !!auth.accessToken && !isTokenExpired(auth.accessToken);
 
-  const isAuthenticated = () => !!auth.accessToken;
+  const handleSnackbarClose = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
+
+  const showSnackbar = (
+    message: string,
+    severity: "success" | "error" | "info"
+  ) => {
+    setSnackbar({ open: true, message, severity });
+  };
 
   const login = async (data: LoginData) => {
     try {
       const response = await loginUser(data);
       const accessToken = response.accessToken;
 
+      if (isTokenExpired(accessToken)) {
+        throw new Error("Token expired");
+      }
+
       setAuth({
         user: response.user,
         accessToken,
       });
 
-      navigate("/home", { replace: true });
+      localStorage.setItem("token", accessToken);
+      localStorage.setItem("user", JSON.stringify(response.user));
+
+      showSnackbar("Login realizado com sucesso!", "success");
+      navigateTo(navigate, "/home");
     } catch (error: any) {
-      if (!error?.response) {
-        console.error("No Server Response");
-      } else if (error.response?.status === 400) {
-        console.error("Missing Name or Password");
-      } else if (error.response?.status === 401) {
-        console.error("Unauthorized");
-      } else {
-        console.error("Login Failed");
-      }
+      handleAuthError(error, "Login");
+      showSnackbar("Falha ao realizar login.", "error");
     }
   };
 
   const register = async (data: RegisterData) => {
     try {
       await registerUser(data);
-      navigate("/login", { replace: true });
+      showSnackbar(
+        "Cadastro realizado com sucesso! Por favor faça login agora.",
+        "success"
+      );
+      navigateTo(navigate, "/login");
     } catch (error: any) {
-      if (!error?.response) {
-        console.error("No Server Response");
-      } else if (error.response?.status === 409) {
-        console.error("Name Taken");
-      } else {
-        console.error("Registration Failed");
-      }
+      handleAuthError(error, "Cadastro");
+      showSnackbar("Falha ao realizar cadastro.", "error");
     }
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setAuth({ accessToken: "", user: null });
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    navigate("/login", { replace: true });
-  };
+    showSnackbar("Você foi desconectado.", "info");
+    navigateTo(navigate, "/login");
+  }, [navigate]);
+
+  useEffect(() => {
+    if (auth.accessToken && isTokenExpired(auth.accessToken)) {
+      logout();
+    }
+  }, [auth.accessToken, logout]);
 
   return (
     <AuthContext.Provider
       value={{ auth, setAuth, isAuthenticated, login, register, logout }}
     >
       {children}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </AuthContext.Provider>
   );
 };
