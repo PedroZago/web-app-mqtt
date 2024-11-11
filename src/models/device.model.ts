@@ -9,7 +9,7 @@ export interface DeviceData {
   gatewayId?: string;
   animalId?: string;
   model: string;
-  activationDate?: Date;
+  activationDate?: string;
 }
 
 export interface DeviceAttributes extends DeviceData {

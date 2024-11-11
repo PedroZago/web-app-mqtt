@@ -7,15 +7,12 @@ import { useAnimalService } from "../../services/animal.service";
 import moment from "moment";
 import { DeviceType, deviceType } from "../../enums/device-type.enum";
 import { DeviceStatus, deviceStatus } from "../../enums/device-status.enum";
+import { Option } from "../../interfaces/option";
 
 const DevicesPage: FC = () => {
   const [deviceData, setDeviceData] = useState<DeviceAttributes[]>([]);
-  const [animalsOptions, setAnimalsOptions] = useState<
-    { id: string; name: string }[]
-  >([]);
-  const [gatewaysOptions, setGatewaysOptions] = useState<
-    { id: string; name: string }[]
-  >([]);
+  const [animalsOptions, setAnimalsOptions] = useState<Option[]>([]);
+  const [gatewaysOptions, setGatewaysOptions] = useState<Option[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const { createDevice, deleteDevice, fetchDevices, updateDevice } =
@@ -53,19 +50,19 @@ const DevicesPage: FC = () => {
     }
   }, []);
 
-  const deviceTypeOptions: { id: string; name: string }[] = Object.entries(
-    DeviceType
-  ).map(([_, value]) => ({
-    id: value,
-    name: deviceType[value],
-  }));
+  const deviceTypeOptions: Option[] = Object.entries(DeviceType).map(
+    ([_, value]) => ({
+      id: value,
+      name: deviceType[value],
+    })
+  );
 
-  const deviceStatusOptions: { id: string; name: string }[] = Object.entries(
-    DeviceStatus
-  ).map(([_, value]) => ({
-    id: value,
-    name: deviceStatus[value],
-  }));
+  const deviceStatusOptions: Option[] = Object.entries(DeviceStatus).map(
+    ([_, value]) => ({
+      id: value,
+      name: deviceStatus[value],
+    })
+  );
 
   useEffect(() => {
     loadDevices();
@@ -145,7 +142,7 @@ const DevicesPage: FC = () => {
           field: "activationDate",
           headerName: "Data de Ativação",
           renderCell: (params) =>
-            moment(params?.row?.activationDate).format("DD/MM/YYYY"),
+            moment.parseZone(params?.row?.activationDate).format("DD/MM/YYYY"),
         },
       ]}
       data={deviceData}

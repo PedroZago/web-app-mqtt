@@ -5,6 +5,7 @@ import { UserAttributes } from "../../models/user.model";
 import { useUserService } from "../../services/user.service";
 import moment from "moment";
 import { userRole, UserRole } from "../../enums/user-role.enum";
+import { Option } from "../../interfaces/option";
 
 const UsersPage: FC = () => {
   const [userData, setUserData] = useState<UserAttributes[]>([]);
@@ -24,12 +25,12 @@ const UsersPage: FC = () => {
     }
   }, []);
 
-  const userRoleOptions: { id: string; name: string }[] = Object.entries(
-    UserRole
-  ).map(([_, value]) => ({
-    id: value,
-    name: userRole[value],
-  }));
+  const userRoleOptions: Option[] = Object.entries(UserRole).map(
+    ([_, value]) => ({
+      id: value,
+      name: userRole[value],
+    })
+  );
 
   useEffect(() => {
     loadUsers();

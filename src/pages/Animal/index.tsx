@@ -4,19 +4,22 @@ import AnimalForm from "./AnimalForm";
 import { AnimalAttributes } from "../../models/animal.model";
 import { useAnimalService } from "../../services/animal.service";
 import { useSpecieService } from "../../services/specie.service";
+import { useBreedService } from "../../services/breed.service";
 import moment from "moment";
+import { Option } from "../../interfaces/option";
+import { AnimalSex, animalSex } from "../../enums/animal-sex.enum";
 
 const AnimalsPage: FC = () => {
   const [animalData, setAnimalData] = useState<AnimalAttributes[]>([]);
-  const [speciesOptions, setSpeciesOptions] = useState<
-    { id: string; name: string }[]
-  >([]);
+  const [speciesOptions, setSpeciesOptions] = useState<Option[]>([]);
+  const [breedsOptions, setBreedsOptions] = useState<Option[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const { createAnimal, deleteAnimal, fetchAnimals, updateAnimal } =
     useAnimalService();
 
   const { fetchSpecies } = useSpecieService();
+  const { fetchBreeds } = useBreedService();
 
   const loadAnimals = useCallback(async () => {
     setLoading(true);
@@ -42,10 +45,30 @@ const AnimalsPage: FC = () => {
     }
   }, []);
 
+  const loadBreeds = useCallback(async () => {
+    setLoading(true);
+    try {
+      const breeds = await fetchBreeds();
+      setBreedsOptions(breeds);
+    } catch (error) {
+      console.error("Erro ao carregar raças:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const animalSexOptions: Option[] = Object.entries(AnimalSex).map(
+    ([_, value]) => ({
+      id: value,
+      name: animalSex[value],
+    })
+  );
+
   useEffect(() => {
     loadAnimals();
     loadSpecies();
-  }, [loadAnimals, loadSpecies]);
+    loadBreeds();
+  }, [loadAnimals, loadSpecies, loadBreeds]);
 
   const handleCreate = async (data: AnimalAttributes) => {
     setLoading(true);
@@ -94,12 +117,21 @@ const AnimalsPage: FC = () => {
           headerName: "Espécie",
           renderCell: (params) => params?.row?.specie?.name,
         },
-        { field: "breed", headerName: "Raça" },
+        {
+          field: "breedId",
+          headerName: "Raça",
+          renderCell: (params) => params?.row?.breed?.name,
+        },
+        {
+          field: "sex",
+          headerName: "Sexo",
+          renderCell: (params) => animalSex[params.row.sex] || params.row.sex,
+        },
         {
           field: "birthDate",
           headerName: "Data de Nascimento",
           renderCell: (params) =>
-            moment(params?.row?.birthDate).format("DD/MM/YYYY"),
+            moment.parseZone(params?.row?.birthDate).format("DD/MM/YYYY"),
         },
         { field: "weight", headerName: "Peso (kg)" },
       ]}
@@ -108,7 +140,12 @@ const AnimalsPage: FC = () => {
       onEdit={handleEdit}
       onDelete={handleDelete}
       FormComponent={(props) => (
-        <AnimalForm {...props} speciesOptions={speciesOptions} />
+        <AnimalForm
+          {...props}
+          speciesOptions={speciesOptions}
+          breedsOptions={breedsOptions}
+          animalSexOptions={animalSexOptions}
+        />
       )}
       loading={loading}
     />

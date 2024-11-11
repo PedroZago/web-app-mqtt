@@ -84,8 +84,13 @@ const CRUDPage = <T extends { id: string }>({
             <FormComponent
               data={selectedData}
               onSubmit={(formData) => {
-                if (openModal === "create" && onCreate) onCreate(formData);
-                else if (openModal === "edit" && onEdit) onEdit(formData);
+                const dataToSubmit =
+                  openModal === "create"
+                    ? { ...formData, id: undefined }
+                    : formData;
+
+                if (openModal === "create" && onCreate) onCreate(dataToSubmit);
+                else if (openModal === "edit" && onEdit) onEdit(dataToSubmit);
                 handleCloseModal();
               }}
             />

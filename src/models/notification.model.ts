@@ -1,7 +1,7 @@
 export interface NotificationData {
   title: string;
   message: string;
-  dateTime: Date;
+  dateTime: string;
   userId: string;
   read: boolean;
 }

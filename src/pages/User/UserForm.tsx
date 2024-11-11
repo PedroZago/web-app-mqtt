@@ -9,12 +9,12 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { UserAttributes } from "../../models/user.model";
-import { UserRole } from "../../enums/user-role.enum";
+import { Option } from "../../interfaces/option";
 
 interface UserFormProps {
   data?: UserAttributes | null;
   onSubmit: (data: UserAttributes) => void;
-  userRoleOptions: { id: string; name: string }[];
+  userRoleOptions: Option[];
 }
 
 const UserForm: FC<UserFormProps> = ({ data, onSubmit, userRoleOptions }) => {

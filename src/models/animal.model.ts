@@ -5,7 +5,7 @@ export interface AnimalData {
   specieId: string;
   breedId: string;
   sex: AnimalSex;
-  birthDate: Date;
+  birthDate: string;
   weight: number;
 }
 

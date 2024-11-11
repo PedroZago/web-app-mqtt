@@ -99,6 +99,7 @@ const SidebarLayout: FC<SidebarLayoutProps> = ({ title, children }) => {
               icon: <NotificationsIcon />,
             },
             { text: "Espécies", path: "/species", icon: <AssignmentIcon /> },
+            { text: "Raças", path: "/breeds", icon: <AssignmentIcon /> },
             { text: "Telemetrias", path: "/telemetries", icon: <GraphIcon /> },
             { text: "Usuários", path: "/users", icon: <PeopleIcon /> },
           ].map((item, index) => (
@@ -107,7 +108,7 @@ const SidebarLayout: FC<SidebarLayoutProps> = ({ title, children }) => {
                 {item.icon}
                 <ListItemText primary={item.text} sx={{ ml: 1 }} />
               </ListItemButton>
-              {index < 5 && <Divider />}
+              {index < 6 && <Divider />}
             </div>
           ))}
         </List>

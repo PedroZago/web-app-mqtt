@@ -15,6 +15,7 @@ import DevicesPage from "./pages/Device";
 import NotificationsPage from "./pages/Notification";
 import TelemetriesPage from "./pages/Telemetry";
 import UsersPage from "./pages/User";
+import BreedPage from "./pages/Breed";
 
 const App: FC = () => {
   return (
@@ -39,6 +40,7 @@ const App: FC = () => {
           <Route path="home" element={<DashboardPage />} />
           <Route path="animals" element={<AnimalsPage />} />
           <Route path="species" element={<SpeciesPage />} />
+          <Route path="breeds" element={<BreedPage />} />
           <Route path="devices" element={<DevicesPage />} />
           <Route path="notifications" element={<NotificationsPage />} />
           <Route path="telemetries" element={<TelemetriesPage />} />

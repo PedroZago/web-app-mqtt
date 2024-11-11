@@ -70,7 +70,7 @@ const GenericTable = <T extends { id: string | number }>({
         autoPageSize
         pageSizeOptions={[10, 25, 50, 100]}
         pagination
-        checkboxSelection
+        rowSelection={false}
       />
     </div>
   );
