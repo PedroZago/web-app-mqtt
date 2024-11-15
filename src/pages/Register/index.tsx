@@ -16,24 +16,31 @@ import { useAuth } from "../../hooks/useAuth";
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Email inválido").required("Campo obrigatório"),
+  name: Yup.string()
+    .min(3, "Mínimo de 3 caracteres")
+    .required("Campo obrigatório"),
   password: Yup.string()
-    .min(6, "Mínimo de 6 caracteres")
+    .min(8, "Mínimo de 8 caracteres")
+    .required("Campo obrigatório"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password"), undefined], "As senhas devem coincidir")
     .required("Campo obrigatório"),
 });
 
-const LoginPage: React.FC = () => {
+const RegisterPage: React.FC = () => {
   const [errMsg, setErrMsg] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { login } = useAuth();
+  const [showConfirmPassword, setConfirmShowPassword] = useState(false);
+  const { register } = useAuth();
 
   const formik = useFormik({
-    initialValues: { email: "", password: "" },
+    initialValues: { email: "", name: "", password: "", confirmPassword: "" },
     validationSchema,
     onSubmit: async (values) => {
       try {
-        await login(values);
+        await register(values);
       } catch {
-        setErrMsg("Falha no login. Tente novamente.");
+        setErrMsg("Falha no cadastro. Tente novamente.");
       }
     },
   });
@@ -59,7 +66,7 @@ const LoginPage: React.FC = () => {
         >
           <CardContent>
             <Typography variant="h4" color="primary" gutterBottom>
-              Login
+              Cadastro
             </Typography>
             {errMsg && <Alert severity="error">{errMsg}</Alert>}
 
@@ -69,12 +76,25 @@ const LoginPage: React.FC = () => {
                 id="email"
                 name="email"
                 label="Email"
-                type="email"
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 error={formik.touched.email && Boolean(formik.errors.email)}
                 helperText={formik.touched.email && formik.errors.email}
+                required
+                sx={{ mb: 2 }}
+              />
+
+              <TextInput
+                variant="outlined"
+                id="name"
+                name="name"
+                label="Nome"
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.name && Boolean(formik.errors.name)}
+                helperText={formik.touched.name && formik.errors.name}
                 required
                 sx={{ mb: 2 }}
               />
@@ -93,13 +113,38 @@ const LoginPage: React.FC = () => {
                 }
                 helperText={formik.touched.password && formik.errors.password}
                 required
-                sx={{ mb: 3 }}
+                sx={{ mb: 2 }}
                 showPassword={showPassword}
                 toggleShowPassword={() => setShowPassword(!showPassword)}
               />
 
+              <TextInput
+                variant="outlined"
+                id="confirmPassword"
+                name="confirmPassword"
+                label="Confirmar Senha"
+                type="password"
+                value={formik.values.confirmPassword}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={
+                  formik.touched.confirmPassword &&
+                  Boolean(formik.errors.confirmPassword)
+                }
+                helperText={
+                  formik.touched.confirmPassword &&
+                  formik.errors.confirmPassword
+                }
+                required
+                sx={{ mb: 3 }}
+                showPassword={showConfirmPassword}
+                toggleShowPassword={() =>
+                  setConfirmShowPassword(!showConfirmPassword)
+                }
+              />
+
               <CustomButton
-                label="Login"
+                label="Cadastrar"
                 fullWidth
                 sx={{
                   borderRadius: 8,
@@ -115,9 +160,9 @@ const LoginPage: React.FC = () => {
             </form>
 
             <Typography variant="body2">
-              Não tem uma conta?{" "}
-              <Link to="/register" style={{ color: "#6a11cb" }}>
-                Cadastre-se
+              Já tem uma conta?{" "}
+              <Link to="/login" style={{ color: "#6a11cb" }}>
+                Entrar
               </Link>
             </Typography>
           </CardContent>
@@ -127,4 +172,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

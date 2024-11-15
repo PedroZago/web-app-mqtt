@@ -100,7 +100,8 @@ const TelemetriesPage: FC = () => {
           {
             field: "deviceId",
             headerName: "Dispositivo",
-            renderCell: (params) => params?.row?.specie?.name,
+            renderCell: (params) =>
+              `${params?.row?.device?.model} - ${params?.row?.device?.serialNumber}`,
           },
         ]}
         data={telemetryData}
@@ -112,18 +113,12 @@ const TelemetriesPage: FC = () => {
           <DialogTitle>Detalhes da Telemetria</DialogTitle>
           <DialogContent>
             <Typography>
-              <strong>ID:</strong> {selectedTelemetry.id}
-            </Typography>
-            <Typography>
               <strong>Tópico:</strong> {selectedTelemetry.topic}
             </Typography>
-            <Typography>
+            <Typography sx={{ mt: 2 }}>
               <strong>Mensagem:</strong>
             </Typography>
             <pre>{formatMessage(selectedTelemetry.message)}</pre>
-            <Typography>
-              <strong>Dispositivo:</strong> {selectedTelemetry.deviceId}
-            </Typography>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseModal}>Fechar</Button>

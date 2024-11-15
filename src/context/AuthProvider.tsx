@@ -11,6 +11,7 @@ import { UserAttributes } from "../models/user.model";
 import { loginUser, registerUser } from "../services/auth.service";
 import { AxiosError } from "axios";
 import { Snackbar, Alert } from "@mui/material";
+import { UserRole } from "../enums/user-role.enum";
 
 export interface LoginData {
   email: string;
@@ -31,6 +32,8 @@ export interface AuthContextType {
   login: (user: LoginData) => Promise<void>;
   register: (user: RegisterData) => Promise<void>;
   logout: () => void;
+  isAdminUser: () => boolean;
+  saveUserData: (accessToken: string, user: UserAttributes) => void;
 }
 
 export interface AuthState {
@@ -106,6 +109,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setSnackbar({ open: true, message, severity });
   };
 
+  const saveUserData = (accessToken: string, user: UserAttributes) => {
+    setAuth({
+      accessToken,
+      user,
+    });
+
+    localStorage.setItem("token", accessToken);
+    localStorage.setItem("user", JSON.stringify(user));
+  };
+
   const login = async (data: LoginData) => {
     try {
       const response = await loginUser(data);
@@ -115,13 +128,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw new Error("Token expired");
       }
 
-      setAuth({
-        user: response.user,
-        accessToken,
-      });
-
-      localStorage.setItem("token", accessToken);
-      localStorage.setItem("user", JSON.stringify(response.user));
+      saveUserData(accessToken, response.user);
 
       showSnackbar("Login realizado com sucesso!", "success");
       navigateTo(navigate, "/home");
@@ -145,6 +152,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const isAdminUser = (): boolean => {
+    try {
+      if (!auth.accessToken) {
+        logout();
+        return false;
+      }
+
+      const isAdminRole = auth.user?.role === UserRole.ADMIN;
+      return isAdminRole;
+    } catch (error: any) {
+      showSnackbar(`Erro ao obter a role do usuário: ${error}`, error);
+      return false;
+    }
+  };
+
   const logout = useCallback(() => {
     setAuth({ accessToken: "", user: null });
     localStorage.removeItem("token");
@@ -161,7 +183,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ auth, setAuth, isAuthenticated, login, register, logout }}
+      value={{
+        auth,
+        setAuth,
+        isAuthenticated,
+        login,
+        register,
+        logout,
+        isAdminUser,
+        saveUserData,
+      }}
     >
       {children}
       <Snackbar

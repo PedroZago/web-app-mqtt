@@ -8,6 +8,7 @@ import {
 import { IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useAuth } from "../hooks/useAuth";
 
 export interface Column<T> extends GridColTypeDef {
   field: keyof T;
@@ -27,6 +28,8 @@ const GenericTable = <T extends { id: string | number }>({
   onEdit,
   onDelete,
 }: GenericTableProps<T>) => {
+  const { isAdminUser } = useAuth();
+
   const hasOnEdit = !!onEdit;
   const hasOnDelete = !!onDelete;
   const hasActions = hasOnEdit && hasOnDelete;
@@ -37,7 +40,7 @@ const GenericTable = <T extends { id: string | number }>({
       field: col.field as string,
       flex: 1,
     })),
-    ...(hasActions
+    ...(hasActions && isAdminUser()
       ? [
           {
             field: "actions",

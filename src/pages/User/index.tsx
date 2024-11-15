@@ -3,7 +3,6 @@ import CRUDPage from "../../components/CRUDPage";
 import UserForm from "./UserForm";
 import { UserAttributes } from "../../models/user.model";
 import { useUserService } from "../../services/user.service";
-import moment from "moment";
 import { userRole, UserRole } from "../../enums/user-role.enum";
 import { Option } from "../../interfaces/option";
 

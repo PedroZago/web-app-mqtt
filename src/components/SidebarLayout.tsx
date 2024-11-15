@@ -23,9 +23,12 @@ import DevicesIcon from "@mui/icons-material/Devices";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import GraphIcon from "@mui/icons-material/ShowChart";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PeopleIcon from "@mui/icons-material/People";
-import { Link } from "react-router-dom";
+import HomeIcon from "@mui/icons-material/Home";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import CustomButton from "./CustomButton";
 
 const drawerWidth = 240;
 
@@ -37,13 +40,20 @@ interface SidebarLayoutProps {
 const SidebarLayout: FC<SidebarLayoutProps> = ({ title, children }) => {
   const [open, setOpen] = useState(false);
 
-  const { logout } = useAuth();
+  const hiddenRoutes = ["/home"];
+
+  const { logout, isAdminUser } = useAuth();
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleDrawerToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
 
   const handleLogout = () => logout();
+
+  const handleGoHome = () => navigate("/home");
 
   return (
     <Box sx={{ display: "flex", height: "100vh", width: "100vw" }}>
@@ -64,7 +74,7 @@ const SidebarLayout: FC<SidebarLayoutProps> = ({ title, children }) => {
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             {title}
           </Typography>
-          <IconButton color="inherit">
+          <IconButton color="inherit" onClick={() => navigate("/perfil")}>
             <AccountCircle />
           </IconButton>
           <Button
@@ -91,26 +101,62 @@ const SidebarLayout: FC<SidebarLayoutProps> = ({ title, children }) => {
         <Toolbar />
         <List>
           {[
-            { text: "Animais", path: "/animals", icon: <PetsIcon /> },
-            { text: "Dispositivos", path: "/devices", icon: <DevicesIcon /> },
+            { text: "Home", path: "/home", icon: <HomeIcon />, isShow: true },
+            {
+              text: "Espécies",
+              path: "/species",
+              icon: <AssignmentIcon />,
+              isShow: true,
+            },
+            {
+              text: "Raças",
+              path: "/breeds",
+              icon: <AssignmentIcon />,
+              isShow: true,
+            },
+            {
+              text: "Animais",
+              path: "/animals",
+              icon: <PetsIcon />,
+              isShow: true,
+            },
+            {
+              text: "Dispositivos",
+              path: "/devices",
+              icon: <DevicesIcon />,
+              isShow: true,
+            },
             {
               text: "Notificações",
               path: "/notifications",
               icon: <NotificationsIcon />,
+              isShow: true,
             },
-            { text: "Espécies", path: "/species", icon: <AssignmentIcon /> },
-            { text: "Raças", path: "/breeds", icon: <AssignmentIcon /> },
-            { text: "Telemetrias", path: "/telemetries", icon: <GraphIcon /> },
-            { text: "Usuários", path: "/users", icon: <PeopleIcon /> },
-          ].map((item, index) => (
-            <div key={item.text}>
-              <ListItemButton component={Link} to={item.path}>
-                {item.icon}
-                <ListItemText primary={item.text} sx={{ ml: 1 }} />
-              </ListItemButton>
-              {index < 6 && <Divider />}
-            </div>
-          ))}
+            {
+              text: "Telemetrias",
+              path: "/telemetries",
+              icon: <GraphIcon />,
+              isShow: true,
+            },
+            {
+              text: "Usuários",
+              path: "/users",
+              icon: <PeopleIcon />,
+              isShow: isAdminUser(),
+            },
+          ].map((item, index) => {
+            return (
+              item.isShow && (
+                <div key={item.text}>
+                  <ListItemButton component={Link} to={item.path}>
+                    {item.icon}
+                    <ListItemText primary={item.text} sx={{ ml: 1 }} />
+                  </ListItemButton>
+                  {index < 7 && <Divider />}
+                </div>
+              )
+            );
+          })}
         </List>
       </Drawer>
       <Backdrop
@@ -135,11 +181,21 @@ const SidebarLayout: FC<SidebarLayoutProps> = ({ title, children }) => {
           sx={{
             width: "100%",
             maxWidth: "none",
-            padding: 3,
+            padding: 1,
           }}
           maxWidth={false}
         >
-          {children}
+          {!hiddenRoutes.includes(location.pathname) && (
+            <CustomButton
+              label="Voltar"
+              variant="outlined"
+              color="primary"
+              onClick={handleGoHome}
+              startIcon={<ArrowBackIcon />}
+              sx={{ mb: 2, padding: "8px 16px" }}
+            />
+          )}
+          <Box>{children}</Box>
         </Container>
       </Box>
     </Box>

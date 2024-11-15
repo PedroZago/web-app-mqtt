@@ -54,7 +54,11 @@ const NotificationsPage: FC = () => {
             moment.parseZone(params?.row?.dateTime).format("DD/MM/YYYY"),
         },
         { field: "userId", headerName: "Usuário" },
-        { field: "read", headerName: "Já lido?" },
+        {
+          field: "read",
+          headerName: "Já lido?",
+          renderCell: (params) => (params?.row?.read ? "Sim" : "Não"),
+        },
       ]}
       data={notificationData}
       onDelete={handleDelete}
