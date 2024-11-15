@@ -5,7 +5,7 @@ import {
   GridRenderCellParams,
   GridRowsProp,
 } from "@mui/x-data-grid";
-import { IconButton } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useAuth } from "../hooks/useAuth";
@@ -74,6 +74,13 @@ const GenericTable = <T extends { id: string | number }>({
         pageSizeOptions={[10, 25, 50, 100]}
         pagination
         rowSelection={false}
+        slots={{
+          noRowsOverlay: () => (
+            <Stack height="100%" alignItems="center" justifyContent="center">
+              Ainda não há registros para exibir.
+            </Stack>
+          ),
+        }}
       />
     </div>
   );

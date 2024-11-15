@@ -159,7 +159,7 @@ const DevicesPage: FC = () => {
         />
       )}
       loading={loading}
-      hasNecessaryData={!animalsOptions}
+      hasNecessaryData={animalsOptions.length !== 0}
       messageHasNecessaryData="É necessário realizar o cadastro de animais antes de cadastrar o dispositivo."
     />
   );

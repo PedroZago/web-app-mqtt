@@ -106,10 +106,6 @@ const AnimalsPage: FC = () => {
     }
   };
 
-  // if (!!speciesOptions && !!speciesOptions) {
-  //   return null;
-  // }
-
   return (
     <CRUDPage
       title="Animal"
@@ -152,7 +148,9 @@ const AnimalsPage: FC = () => {
         />
       )}
       loading={loading}
-      hasNecessaryData={!speciesOptions && !speciesOptions}
+      hasNecessaryData={
+        speciesOptions.length !== 0 || speciesOptions.length !== 0
+      }
       messageHasNecessaryData="É necessário realizar o cadastro de espécies e raças antes de cadastrar o animal."
     />
   );

@@ -157,7 +157,7 @@ const CRUDPage = <T extends { id: string }>({
 
           <Backdrop
             sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-            open={!hasNecessaryData}
+            open={!loading && !hasNecessaryData}
           >
             <Card
               variant="outlined"
