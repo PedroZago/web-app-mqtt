@@ -8,6 +8,7 @@ import {
   InputLabel,
   SelectChangeEvent,
   FormHelperText,
+  Box,
 } from "@mui/material";
 import { AnimalAttributes } from "../../models/animal.model";
 import { Option } from "../../interfaces/option";
@@ -187,9 +188,11 @@ const AnimalForm: FC<AnimalFormProps> = ({
         error={!!errors.weight}
         helperText={errors.weight}
       />
-      <Button type="submit" variant="contained" color="primary">
-        Salvar
-      </Button>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+        <Button type="submit" variant="contained" color="primary">
+          Salvar
+        </Button>
+      </Box>
     </form>
   );
 };

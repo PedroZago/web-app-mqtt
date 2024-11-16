@@ -10,7 +10,9 @@ import {
   Backdrop,
   Card,
   CardContent,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import GenericTable, { Column } from "./GenericTable";
 import SidebarLayout from "./SidebarLayout";
 import { useAuth } from "../hooks/useAuth";
@@ -103,6 +105,19 @@ const CRUDPage = <T extends { id: string }>({
                 onClose={handleCloseModal}
               >
                 <DialogTitle>
+                  <IconButton
+                    edge="end"
+                    color="inherit"
+                    onClick={handleCloseModal}
+                    aria-label="close"
+                    sx={{
+                      position: "absolute",
+                      right: 24,
+                      top: 12,
+                    }}
+                  >
+                    <CloseIcon />
+                  </IconButton>
                   {openModal === "create"
                     ? `Adicionar ${title}`
                     : `Editar ${title}`}
@@ -124,9 +139,6 @@ const CRUDPage = <T extends { id: string }>({
                     }}
                   />
                 </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleCloseModal}>Cancelar</Button>
-                </DialogActions>
               </Dialog>
             )}
           <Dialog open={openModal === "delete"} onClose={handleCloseModal}>

@@ -7,6 +7,7 @@ import {
   FormControl,
   InputLabel,
   SelectChangeEvent,
+  Box,
 } from "@mui/material";
 import { UserAttributes } from "../../models/user.model";
 import { Option } from "../../interfaces/option";
@@ -77,9 +78,11 @@ const UserForm: FC<UserFormProps> = ({ data, onSubmit, userRoleOptions }) => {
         </Select>
       </FormControl>
 
-      <Button type="submit" variant="contained" color="primary">
-        Salvar
-      </Button>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+        <Button type="submit" variant="contained" color="primary">
+          Salvar
+        </Button>
+      </Box>
     </form>
   );
 };

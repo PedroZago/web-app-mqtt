@@ -1,5 +1,5 @@
 import { FC, useState, useEffect } from "react";
-import { TextField, Button } from "@mui/material";
+import { TextField, Button, Box } from "@mui/material";
 import { SpecieAttributes } from "../../models/specie.model";
 
 interface SpecieFormProps {
@@ -44,9 +44,11 @@ const SpecieForm: FC<SpecieFormProps> = ({ data, onSubmit }) => {
         fullWidth
         margin="normal"
       />
-      <Button type="submit" variant="contained" color="primary">
-        Salvar
-      </Button>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+        <Button type="submit" variant="contained" color="primary">
+          Salvar
+        </Button>
+      </Box>
     </form>
   );
 };

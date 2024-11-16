@@ -1,5 +1,5 @@
 import { FC, useState, useEffect } from "react";
-import { TextField, Button } from "@mui/material";
+import { TextField, Button, Box } from "@mui/material";
 import { UserAttributes } from "../../models/user.model";
 
 interface PerfilFormProps {
@@ -44,9 +44,11 @@ const PerfilForm: FC<PerfilFormProps> = ({ data, onSubmit }) => {
         fullWidth
         margin="normal"
       />
-      <Button type="submit" variant="contained" color="primary">
-        Salvar
-      </Button>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+        <Button type="submit" variant="contained" color="primary">
+          Salvar
+        </Button>
+      </Box>
     </form>
   );
 };

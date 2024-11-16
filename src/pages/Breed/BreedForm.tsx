@@ -1,5 +1,5 @@
 import { FC, useState, useEffect } from "react";
-import { TextField, Button } from "@mui/material";
+import { TextField, Button, Box } from "@mui/material";
 import { SpecieAttributes } from "../../models/specie.model";
 import { FormErrors } from "../../interfaces/form-errors";
 
@@ -62,9 +62,11 @@ const SpecieForm: FC<SpecieFormProps> = ({ data, onSubmit }) => {
         error={!!errors.description}
         helperText={errors.description}
       />
-      <Button type="submit" variant="contained" color="primary">
-        Salvar
-      </Button>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+        <Button type="submit" variant="contained" color="primary">
+          Salvar
+        </Button>
+      </Box>
     </form>
   );
 };

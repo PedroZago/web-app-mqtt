@@ -51,9 +51,15 @@ const NotificationsPage: FC = () => {
           field: "dateTime",
           headerName: "Data e Hora",
           renderCell: (params) =>
-            moment.parseZone(params?.row?.dateTime).format("DD/MM/YYYY"),
+            moment
+              .parseZone(params?.row?.dateTime)
+              .format("DD/MM/YYYY HH:mm:ss"),
         },
-        { field: "userId", headerName: "Usuário" },
+        {
+          field: "userId",
+          headerName: "Usuário",
+          renderCell: (params) => params?.row?.user?.name,
+        },
         {
           field: "read",
           headerName: "Já lido?",

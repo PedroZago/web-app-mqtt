@@ -131,7 +131,9 @@ const AnimalsPage: FC = () => {
           field: "birthDate",
           headerName: "Data de Nascimento",
           renderCell: (params) =>
-            moment.parseZone(params?.row?.birthDate).format("DD/MM/YYYY"),
+            moment
+              .parseZone(params?.row?.birthDate)
+              .format("DD/MM/YYYY HH:mm:ss"),
         },
         { field: "weight", headerName: "Peso (kg)" },
       ]}

@@ -1,25 +1,23 @@
 import { FC, useState } from "react";
 import {
-  Grid,
   Box,
   Typography,
   Button,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
   Avatar,
-  Card,
-  CardContent,
   Divider,
   Backdrop,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
 import { useAuth } from "../../hooks/useAuth";
 import PerfilForm from "./PerfilForm";
 import { UserAttributes } from "../../models/user.model";
 import { userRole } from "../../enums/user-role.enum";
 import SidebarLayout from "../../components/SidebarLayout";
+import CloseIcon from "@mui/icons-material/Close";
 import { useUserService } from "../../services/user.service";
 
 const ProfilePage: FC = () => {
@@ -115,15 +113,25 @@ const ProfilePage: FC = () => {
       </Box>
 
       <Dialog open={openModal} onClose={handleCloseModal}>
-        <DialogTitle>Editar Perfil</DialogTitle>
+        <DialogTitle>
+          <IconButton
+            edge="end"
+            color="inherit"
+            onClick={handleCloseModal}
+            aria-label="close"
+            sx={{
+              position: "absolute",
+              right: 24,
+              top: 12,
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+          Editar Perfil
+        </DialogTitle>
         <DialogContent>
           {auth && <PerfilForm data={auth.user} onSubmit={handleSubmit} />}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseModal} color="secondary">
-            Cancelar
-          </Button>
-        </DialogActions>
       </Dialog>
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}

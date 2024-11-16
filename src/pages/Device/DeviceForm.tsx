@@ -8,6 +8,7 @@ import {
   InputLabel,
   SelectChangeEvent,
   FormHelperText,
+  Box,
 } from "@mui/material";
 import { DeviceAttributes } from "../../models/device.model";
 import { Option } from "../../interfaces/option";
@@ -254,9 +255,11 @@ const DeviceForm: FC<DeviceFormProps> = ({
         error={!!errors.activationDate}
         helperText={errors.activationDate}
       />
-      <Button type="submit" variant="contained" color="primary">
-        Salvar
-      </Button>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+        <Button type="submit" variant="contained" color="primary">
+          Salvar
+        </Button>
+      </Box>
     </form>
   );
 };

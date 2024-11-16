@@ -142,7 +142,9 @@ const DevicesPage: FC = () => {
           field: "activationDate",
           headerName: "Data de Ativação",
           renderCell: (params) =>
-            moment.parseZone(params?.row?.activationDate).format("DD/MM/YYYY"),
+            moment
+              .parseZone(params?.row?.activationDate)
+              .format("DD/MM/YYYY HH:mm:ss"),
         },
       ]}
       data={deviceData}
